@@ -1,104 +1,110 @@
-class PuyoGame {
+class FlowerPuyoGame {
     constructor() {
-        this.board = this.initBoard();
+        this.grid = this.createEmptyGrid(6, 12);
+        this.currentPuyos = [];
         this.score = 0;
-        this.currentPuyo = this.generatePuyo();
-        this.gameState = 'playing'; // can be 'playing', 'paused', or 'gameover'
-        this.difficultyLevel = 'normal'; // options are 'easy', 'normal', 'hard'
-        this.setDifficulty();
+        this.difficultyLevel = 1;
+        this.controls = {
+            left: 'ArrowLeft',
+            right: 'ArrowRight',
+            down: 'ArrowDown',
+            rotate: 'ArrowUp'
+        };
+        this.init();
+    }
+
+    createEmptyGrid(width, height) {
+        return Array.from({ length: height }, () => Array(width).fill(null));
+    }
+
+    init() {
+        this.spawnPuyos();
+        this.startGameLoop();
         this.bindControls();
     }
 
-    initBoard() {
-        const rows = 12;
-        const cols = 6;
-        return Array.from({ length: rows }, () => Array(cols).fill(null));
+    spawnPuyos() {
+        const colors = ['red', 'green', 'blue', 'yellow', 'purple'];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        this.currentPuyos = [{ x: 2, y: 0, color: randomColor }, { x: 2, y: 1, color: randomColor }];
     }
 
-    generatePuyo() {
-        const colors = ['red', 'green', 'blue', 'yellow'];
-        return {
-            shape: [colors[Math.floor(Math.random() * colors.length)], colors[Math.floor(Math.random() * colors.length)]],
-            position: { x: 2, y: 0 }
-        };
-    }
-
-    setDifficulty() {
-        switch (this.difficultyLevel) {
-            case 'easy':
-                // Set easy parameters
-                break;
-            case 'normal':
-                // Set normal parameters
-                break;
-            case 'hard':
-                // Set hard parameters
-                break;
-        }
+    startGameLoop() {
+        setInterval(() => {
+            this.update();
+        }, 1000 / this.difficultyLevel);
     }
 
     bindControls() {
         document.addEventListener('keydown', (event) => {
-            switch (event.key) {
-                case 'ArrowLeft':
-                    this.movePuyo(-1);
+            switch (event.code) {
+                case this.controls.left:
+                    this.move(-1);
                     break;
-                case 'ArrowRight':
-                    this.movePuyo(1);
+                case this.controls.right:
+                    this.move(1);
                     break;
-                case 'ArrowDown':
-                    this.fallPuyo();
+                case this.controls.down:
+                    this.moveDown();
                     break;
-                case 'ArrowUp':
-                    this.rotatePuyo();
+                case this.controls.rotate:
+                    this.rotate();
                     break;
             }
         });
     }
 
-    movePuyo(direction) {
-        const newPos = this.currentPuyo.position.x + direction;
-        if (this.isValidMove(newPos, this.currentPuyo.position.y)) {
-            this.currentPuyo.position.x = newPos;
+    move(direction) {
+        // Move the puyos in the specified direction
+        this.currentPuyos.forEach(puyo => {
+            puyo.x += direction;
+        });
+    }
+
+    moveDown() {
+        // Move puyos down
+        this.currentPuyos.forEach(puyo => {
+            puyo.y += 1;
+        });
+        if (this.checkCollision()) {
+            this.currentPuyos.forEach(puyo => {
+                puyo.y -= 1; // Undo move
+            });
+            this.mergePuyos();
+            this.clearMatches();
+            this.spawnPuyos();
         }
     }
 
-    rotatePuyo() {
-        // Add rotation logic
+    rotate() {
+        // Simple rotation logic for this demo
+        this.currentPuyos.forEach(puyo => {
+            puyo.x = (puyo.x + 1) % 6;
+        });
     }
 
-    fallPuyo() {
-        const newY = this.currentPuyo.position.y + 1;
-        if (this.isValidMove(this.currentPuyo.position.x, newY)) {
-            this.currentPuyo.position.y = newY;
-        } else {
-            this.placePuyo();
-            this.checkMatches();
-            this.currentPuyo = this.generatePuyo();
-        }
+    checkCollision() {
+        // Basic collision check logic
+        return this.currentPuyos.some(puyo => {
+            return puyo.y >= 12 || puyo.x < 0 || puyo.x >= 6;
+        });
     }
 
-    isValidMove(x, y) {
-        // Check if the position is within the board and not occupied
-        return x >= 0 && x < 6 && y < 12 && !this.board[y][x];
+    mergePuyos() {
+        // Merge the current puyos into the grid
+        this.currentPuyos.forEach(puyo => {
+            this.grid[puyo.y][puyo.x] = puyo.color;
+        });
     }
 
-    placePuyo() {
-        const { x, y } = this.currentPuyo.position;
-        this.board[y][x] = this.currentPuyo.shape[0]; // Place the block on the board
+    clearMatches() {
+        // Check and clear matches in the grid
+        // Basic match clearing logic (for demo purposes)
+        this.grid = this.grid.filter(row => {
+            return !row.every(cell => cell === null);
+        });
+        this.score += 10; // Increment score for matches
     }
-
-    checkMatches() {
-        // Logic to check for matching puyos and update score
-    }
-
-    updateScore(points) {
-        this.score += points;
-        // Update the score display
-    }
-
-    // Additional methods for rendering and game state management
 }
 
-// Initialize the game
-const game = new PuyoGame();
+const game = new FlowerPuyoGame();
