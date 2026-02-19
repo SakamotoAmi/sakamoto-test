@@ -1,69 +1,104 @@
-// Flower-themed Puyo Puyo Game Logic
+class PuyoGame {
+    constructor() {
+        this.board = this.initBoard();
+        this.score = 0;
+        this.currentPuyo = this.generatePuyo();
+        this.gameState = 'playing'; // can be 'playing', 'paused', or 'gameover'
+        this.difficultyLevel = 'normal'; // options are 'easy', 'normal', 'hard'
+        this.setDifficulty();
+        this.bindControls();
+    }
 
-const ROWS = 12; // Height of the game board
-const COLS = 6; // Width of the game board
-let board = [];
+    initBoard() {
+        const rows = 12;
+        const cols = 6;
+        return Array.from({ length: rows }, () => Array(cols).fill(null));
+    }
 
-// Initialize the game board
-function initBoard() {
-    for (let r = 0; r < ROWS; r++) {
-        board[r] = [];
-        for (let c = 0; c < COLS; c++) {
-            board[r][c] = null;
+    generatePuyo() {
+        const colors = ['red', 'green', 'blue', 'yellow'];
+        return {
+            shape: [colors[Math.floor(Math.random() * colors.length)], colors[Math.floor(Math.random() * colors.length)]],
+            position: { x: 2, y: 0 }
+        };
+    }
+
+    setDifficulty() {
+        switch (this.difficultyLevel) {
+            case 'easy':
+                // Set easy parameters
+                break;
+            case 'normal':
+                // Set normal parameters
+                break;
+            case 'hard':
+                // Set hard parameters
+                break;
         }
     }
-}
 
-// Generate a new Puyo
-function generatePuyo() {
-    const puyoTypes = ['🌸','🌼','🌻','🌺']; // Flower emojis for the puyos
-    return puyoTypes[Math.floor(Math.random() * puyoTypes.length)];
-}
-
-// Check for collisions
-function collision(x, y) {
-    if (y < 0 || x < 0 || x >= COLS || (y < ROWS && board[y][x] !== null)) {
-        return true;
-    }
-    return false;
-}
-
-// Match logic for removing puyos
-function matchPuyos() {
-    for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-            const puyo = board[r][c];
-            if (puyo) {
-                // Check upward, rightward and downward for matching puyos
-                checkMatch(r, c, puyo);
+    bindControls() {
+        document.addEventListener('keydown', (event) => {
+            switch (event.key) {
+                case 'ArrowLeft':
+                    this.movePuyo(-1);
+                    break;
+                case 'ArrowRight':
+                    this.movePuyo(1);
+                    break;
+                case 'ArrowDown':
+                    this.fallPuyo();
+                    break;
+                case 'ArrowUp':
+                    this.rotatePuyo();
+                    break;
             }
+        });
+    }
+
+    movePuyo(direction) {
+        const newPos = this.currentPuyo.position.x + direction;
+        if (this.isValidMove(newPos, this.currentPuyo.position.y)) {
+            this.currentPuyo.position.x = newPos;
         }
     }
-}
 
-// Check for matching puyos
-function checkMatch(r, c, puyo) {
-    // Check direct neighbors for matching logic - simple example
-}
-
-// Keyboard controls
-window.addEventListener('keydown', (event) => {
-    switch (event.key) {
-        case 'ArrowLeft':
-            // Move left logic
-            break;
-        case 'ArrowRight':
-            // Move right logic
-            break;
-        case 'ArrowDown':
-            // Move down logic
-            break;
-        case 'ArrowUp':
-            // Rotate logic or any action
-            break;
+    rotatePuyo() {
+        // Add rotation logic
     }
-});
 
-// Set up the game
-initBoard();
-// Start a game loop or additional setup as required
+    fallPuyo() {
+        const newY = this.currentPuyo.position.y + 1;
+        if (this.isValidMove(this.currentPuyo.position.x, newY)) {
+            this.currentPuyo.position.y = newY;
+        } else {
+            this.placePuyo();
+            this.checkMatches();
+            this.currentPuyo = this.generatePuyo();
+        }
+    }
+
+    isValidMove(x, y) {
+        // Check if the position is within the board and not occupied
+        return x >= 0 && x < 6 && y < 12 && !this.board[y][x];
+    }
+
+    placePuyo() {
+        const { x, y } = this.currentPuyo.position;
+        this.board[y][x] = this.currentPuyo.shape[0]; // Place the block on the board
+    }
+
+    checkMatches() {
+        // Logic to check for matching puyos and update score
+    }
+
+    updateScore(points) {
+        this.score += points;
+        // Update the score display
+    }
+
+    // Additional methods for rendering and game state management
+}
+
+// Initialize the game
+const game = new PuyoGame();
