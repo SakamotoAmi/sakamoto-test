@@ -1,0 +1,69 @@
+.flower {
+    background-color: #ffe4e1; /* Light pink */
+    border: 2px solid #ff69b4; /* Hot pink */
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    position: relative;
+    animation: scale 0.5s infinite alternate;
+}
+
+.flower::before, .flower::after {
+    content: '';
+    position: absolute;
+    background-color: #ffb6c1; /* Light pink */
+    border-radius: 50%;
+}
+
+.flower::before {
+    width: 70px;
+    height: 70px;
+    top: -35px;
+    left: 15px;
+}
+
+.flower::after {
+    width: 70px;
+    height: 70px;
+    top: 15px;
+    left: -35px;
+}
+
+@keyframes scale {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1.05);
+    }
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #e0f7fa; /* Light blue background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+}
+
+h1 {
+    color: #ff1493; /* Deep pink */
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 600px) {
+    .flower {
+        width: 70px;
+        height: 70px;
+    }
+    h1 {
+        font-size: 2rem;
+    }
+}
