@@ -3,24 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Puyo Puyo Flower Game</title>
     <link rel="stylesheet" href="styles.css">
+    <title>Puyo Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #game-board {
+            width: 300px;
+            height: 600px;
+            border: 2px solid black;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(12, 1fr);
+        }
+        .puyo {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: pop 0.5s;
+        }
+        @keyframes pop {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+        .responsive {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Flower-Themed Puyo Puyo Game</h1>
-    </header>
-    <main>
-        <section>
-            <h2>Select Difficulty</h2>
-            <button id="easy">Easy</button>
-            <button id="medium">Medium</button>
-            <button id="hard">Hard</button>
-        </section>
-        <section id="game-area">
-            <!-- Game area will be rendered here -->
-        </section>
-    </main>
-    <script src="script.js"></script>
+    <h1>Puyo Game</h1>
+    <div id="score-display">Score: 0</div>
+    <div id="level-display">Level: 1</div>
+    <div id="game-board">
+        <!-- Puyos will be placed here -->
+    </div>
+    <button id="start-button">Start</button>
+    <button id="pause-button">Pause</button>
+    <div id="controls-info">
+        <p>Controls: Use arrows to move, space to rotate.</p>
+    </div>
+    <script src="game.js"></script>
 </body>
 </html>
